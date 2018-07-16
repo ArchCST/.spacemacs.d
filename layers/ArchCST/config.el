@@ -14,5 +14,5 @@
 ;; 开启indent-mode
 (setq org-startup-indented t)
 
-;; 删除多个空格
-(setq global-hungry-delete-mode t)
+;; 为编程语言类的 major mode 默认启用删除多个空格
+(add-hook 'prog-mode-hook 'spacemacs/toggle-hungry-delete-on)
