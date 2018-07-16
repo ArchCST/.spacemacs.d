@@ -38,7 +38,7 @@ values."
      ;; ----------------------------------------------------------------
      ivy
      helm
-     auto-completion
+     (auto-completion :variables :disabled-for org markdown)
      (better-defaults :variables better-defaults-move-to-end-of-code-first t)
      emacs-lisp
      git
@@ -51,6 +51,8 @@ values."
      ;; syntax-checking
      ;; version-control
      ArchCST
+     (spacemacs-layouts :variables layouts-enable-autosave nil
+                        layouts-autosave-delay 300)
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
