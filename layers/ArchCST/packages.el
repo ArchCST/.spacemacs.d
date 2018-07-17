@@ -1,6 +1,8 @@
 (defconst ArchCST-packages
-  '(youdao-dictionary
+  '(
+    youdao-dictionary
     company
+    spaceline
     )
   )
 
@@ -16,3 +18,14 @@
   (setq company-minimum-prefix-length 2)
   (setq company-idle-delay 0.01)
   )
+
+(defun ArchCST/post-init-spaceline()
+  ;; :init
+  (setq powerline-default-separator 'brace)
+  )
+
+;; (defun ArchCST/init-cnfonts()
+;;   (use-package cnfonts
+;;     :init
+;;     )
+;;   )

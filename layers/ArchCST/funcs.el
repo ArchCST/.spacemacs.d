@@ -5,3 +5,12 @@
 (defun ArchCST/save-LayoutCST()
   (interactive)
   (persp-save-state-to-file "~/.spacemacs.d/layouts/LayoutCST"))
+
+;; Setting English Font
+(set-face-attribute 'default nil :font "M+ 1mn")
+
+;; Chinese Font
+;; (dolist (charset '(kana han symbol cjk-misc bopomofo))
+;;   (set-fontset-font (frame-parameter nil 'font)
+;;                     charset (font-spec :family "WenQuanYi Mirco Hei Mono"
+;;                                        :size 12)))
