@@ -7,7 +7,7 @@
   (persp-save-state-to-file "~/.spacemacs.d/layouts/LayoutCST"))
 
 ;; Setting English Font
-(set-face-attribute 'default nil :font "M+ 1mn")
+;; (set-face-attribute 'default nil :font "M+ 1mn")
 
 ;; Chinese Font
 ;; (dolist (charset '(kana han symbol cjk-misc bopomofo))

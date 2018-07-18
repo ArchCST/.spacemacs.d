@@ -10,6 +10,9 @@
 ;; 设置默认浏览器
 (setq browse-url-browser-function 'browse-url-chromium)
 
+;; 自动加载外部更改的文件
+(auto-revert-mode t)
+
 ;; ;; 设置模式下的字体
 ;; (set-face-attribute
 ;;  'default nil :font "WenQuanYi Micro Hei Mono 14")

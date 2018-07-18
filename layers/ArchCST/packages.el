@@ -20,7 +20,7 @@
   )
 
 (defun ArchCST/post-init-spaceline()
-  ;; :init
+  :init
   (setq powerline-default-separator 'brace)
   )
 
