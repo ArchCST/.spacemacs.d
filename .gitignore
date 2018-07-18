@@ -1,2 +1,3 @@
 # spacemacs的环境配置文件
 *.env
+.DS_Store

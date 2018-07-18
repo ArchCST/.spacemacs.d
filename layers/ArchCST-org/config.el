@@ -108,8 +108,8 @@
 (setq org-capture-templates
       '(("i" "inbox" entry (file+headline "~/Dropbox/OrgCST/inbox.org" "Org-Capture")
          "* %?")
-        ("j" "journal" entry (file+datetree "~/Dropbox/OrgCST/journal.org")
-         "* %?\nDATE: %U\n %i\n %a")
+         ("j" "journal" entry (file+datetree "~/Dropbox/OrgCST/journal.org")
+          "* %?\nDATE: %U\n %i\n %a")
         ))
 
 ;; 在当前buffer打开 indirect buffer

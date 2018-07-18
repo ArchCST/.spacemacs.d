@@ -44,6 +44,7 @@ values."
      git
      markdown
      org
+     ranger
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
@@ -51,12 +52,13 @@ values."
      ;; syntax-checking
      ;; version-control
      ;; (chinese :packages youdao-dictionary fcitx
-     ;;         :variables chinese-enable-fcitx nil
-     ;;         chinese-enable-youdao-dict t)
+     ;;          :variables chinese-enable-fcitx nil
+     ;;          chinese-enable-youdao-dict t)
+     ;; (osx :variables osx-dictionary-dictionary-choice "Simplified Chinese - English"
+     ;;      osx-command-as 'meta)
      ArchCST
      (spacemacs-layouts :variables layouts-enable-autosave nil
                         layouts-autosave-delay 300)
-     ;; (spacemacs//set-monospaced-font "Source Code Pro" "WenQuanYi Micro Hei Mono" 14 16)
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -150,7 +152,7 @@ values."
                                :weight normal
                                :width normal
                                :powerline-scale 0.6)  ;powerline-scale 1.1)
-   
+
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
@@ -234,14 +236,14 @@ values."
    dotspacemacs-loading-progress-bar t
    ;; If non nil the frame is fullscreen when Emacs starts up. (default nil)
    ;; (Emacs 24.4+ only)
-   dotspacemacs-fullscreen-at-startup nil
+   dotspacemacs-fullscreen-at-startup t
    ;; If non nil `spacemacs/toggle-fullscreen' will not use native fullscreen.
    ;; Use to disable fullscreen animations in OSX. (default nil)
    dotspacemacs-fullscreen-use-non-native nil
    ;; If non nil the frame is maximized when Emacs starts up.
    ;; Takes effect only if `dotspacemacs-fullscreen-at-startup' is nil.
    ;; (default nil) (Emacs 24.4+ only)
-   dotspacemacs-maximized-at-startup t
+   dotspacemacs-maximized-at-startup nil
    ;; A value from the range (0..100), in increasing opacity, which describes
    ;; the transparency level of a frame when it's active or selected.
    ;; Transparency can be toggled through `toggle-transparency'. (default 90)
