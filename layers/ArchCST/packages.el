@@ -23,9 +23,3 @@
   :init
   (setq powerline-default-separator 'brace)
   )
-
-;; (defun ArchCST/init-cnfonts()
-;;   (use-package cnfonts
-;;     :init
-;;     )
-;;   )

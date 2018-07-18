@@ -141,25 +141,17 @@ values."
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
 
-   ;; dotspacemacs-default-font '("Source Code Pro"
-   ;;                             :size 13
-   ;;                             :weight normal
-   ;;                             :width normal
-   ;;                             :powerline-scale 0.1)
-
-   dotspacemacs-default-font '("Sarasa Mono SC"
-                               :size 16
-                               :weight normal
-                               :width normal
-                               :powerline-scale 0.6)
-
    ;; aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
    ;; ----------------------------------------
    ;; 啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊
    ;; 字体设置，上面的内容应该等宽。
-
+   dotspacemacs-default-font '("Sarasa Mono SC"       ; "Source Code Pro"
+                               :size 16               ; :size 13
+                               :weight normal
+                               :width normal
+                               :powerline-scale 0.6)  ;powerline-scale 1.1)
+   
    ;; The leader key
-
    dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
    ;; (default "SPC")
@@ -348,27 +340,10 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   (require 'helm)
-  ;; (setq-default powerline-default-separator 'brace)
-  ;; (when (configuration-layer/layer-usedp 'chinese)
-  ;; (when (window-system)
-  ;; )
-
-  ;; (spacemacs//set-monospaced-font   "M+ 1mn" "WenQuanYi Micro Hei" 16 16)
-
-  ;; (setq-default dotspacemacs-default-font '("M+ 1mn"
-  ;;                                           :size 16
-  ;;                                           :weight normal
-  ;;                                           :width normal
-  ;;                                           :powerline-scale 0.8))
-
-  ;; (dolist (charset '(kana han symbol cjk-misc bopomofo))
-  ;;                   (set-fontset-font (frame-parameter nil 'font)
-  ;;                                     charset (font-spec :family "Inziu IosevkaCC SC" :size 16)))
-
   )
 
 (setq custom-file (expand-file-name "cuntom.el" dotspacemacs-directory))
-(load custom-file 'no-error 'no-message)
+;; (load custom-file 'no-error 'no-message)
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
