@@ -48,8 +48,8 @@ values."
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
-     ;; spell-checking
-     ;; syntax-checking
+     spell-checking
+     syntax-checking
      ;; version-control
      ;; (chinese :packages youdao-dictionary fcitx
      ;;          :variables chinese-enable-fcitx nil
@@ -275,7 +275,11 @@ values."
    ;;                       text-mode
    ;;   :size-limit-kb 1000)
    ;; (default nil)
-   dotspacemacs-line-numbers nil
+   dotspacemacs-line-numbers '(:relative nil
+                                         :disabled-for-modes dired-mode
+                                         markdown-mode
+                                         ranger-mode
+                                         :size-limit-kb 1000)
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
    dotspacemacs-folding-method 'evil

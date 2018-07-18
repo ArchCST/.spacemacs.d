@@ -22,4 +22,6 @@
 (defun ArchCST/post-init-spaceline()
   :init
   (setq powerline-default-separator 'brace)
+  (display-time-mode)
+  (fancy-battery-mode)
   )
