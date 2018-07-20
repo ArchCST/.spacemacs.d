@@ -51,9 +51,9 @@ values."
      spell-checking
      syntax-checking
      ;; version-control
-     ;; (chinese :packages youdao-dictionary fcitx
-     ;;          :variables chinese-enable-fcitx nil
-     ;;          chinese-enable-youdao-dict t)
+     (chinese :packages youdao-dictionary fcitx
+              :variables chinese-enable-fcitx t
+              chinese-enable-youdao-dict t)
      ;; (osx :variables osx-dictionary-dictionary-choice "Simplified Chinese - English"
      ;;      osx-command-as 'meta)
      ArchCST
@@ -111,7 +111,7 @@ values."
    ;; with `:variables' keyword (similar to layers). Check the editing styles
    ;; section of the documentation for details on available variables.
    ;; (default 'vim)
-   dotspacemacs-editing-style 'emacs
+   dotspacemacs-editing-style 'vim
    ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading nil
    ;; Specify the startup banner. Default value is `official', it displays
@@ -136,7 +136,8 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(spacemacs-dark
+   dotspacemacs-themes '(
+                         spacemacs-dark
                          spacemacs-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t

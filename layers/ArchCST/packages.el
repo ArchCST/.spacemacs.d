@@ -1,18 +1,18 @@
 (defconst ArchCST-packages
   '(
-    youdao-dictionary
+;;    youdao-dictionary
     company
     spaceline
     )
   )
 
-(defun ArchCST/init-youdao-dictionary()
-  (use-package youdao-dictionary
-    :defer t
-    :init
-    (spacemacs/set-leader-keys "oy" 'youdao-dictionary-search-at-point+)
-    )
-  )
+;; (defun ArchCST/init-youdao-dictionary()
+;;   (use-package youdao-dictionary
+:defer t
+;;     :init
+;;     (spacemacs/set-leader-keys "oy" 'youdao-dictionary-search-at-point+)
+;;     )
+;;   )
 
 (defun ArchCST/post-init-company()
   (setq company-minimum-prefix-length 2)

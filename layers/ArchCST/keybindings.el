@@ -18,3 +18,6 @@
 (global-set-key (kbd "C-h C-f") 'find-function)
 (global-set-key (kbd "C-h C-v") 'find-variable)
 (global-set-key (kbd "C-h C-k") 'find-function-on-key)
+
+;; 绑定有道快捷键
+(spacemacs/set-leader-keys "oy" 'youdao-dictionary-search-at-point+)
