@@ -54,8 +54,7 @@ values."
      (chinese :packages youdao-dictionary fcitx
               :variables chinese-enable-fcitx t
               chinese-enable-youdao-dict t)
-     ;; (osx :variables osx-dictionary-dictionary-choice "Simplified Chinese - English"
-     ;;      osx-command-as 'meta)
+     osx
      ArchCST
      (spacemacs-layouts :variables layouts-enable-autosave nil
                         layouts-autosave-delay 300)
@@ -294,7 +293,8 @@ values."
    ;; Select a scope to highlight delimiters. Possible values are `any',
    ;; `current', `all' or `nil'. Default is `all' (highlight any scope and
    ;; emphasis the current one). (default 'all)
-   dotspacemacs-highlight-delimiters 'all
+   ;; ( x ( o ( V ( M ) V ) o ) x )
+   dotspacemacs-highlight-delimiters 'current
    ;; If non nil, advise quit functions to keep server open when quitting.
    ;; (default nil)
    dotspacemacs-persistent-server nil

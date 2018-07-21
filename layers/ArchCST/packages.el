@@ -1,8 +1,9 @@
 (defconst ArchCST-packages
   '(
-;;    youdao-dictionary
+    ;;    youdao-dictionary
     company
     spaceline
+    fcitx
     )
   )
 
@@ -25,3 +26,7 @@
   (display-time-mode)
   (fancy-battery-mode)
   )
+
+(defun ArchCST/post-init-fcitx()
+  :init
+  (fcitx-aggressive-setup))

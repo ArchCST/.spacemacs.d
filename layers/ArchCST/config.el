@@ -15,11 +15,16 @@
   (setq browse-url-browser-function 'browse-url-chromium))
 
 ;; Mac下用 command 作为 meta key
-(when (and (spacemacs/system-is-mac) window-system)
-  (setq mac-option-modifier 'super)
-  (setq mac-command-modifier 'meta)
-  )
+;; (when (and (spacemacs/system-is-mac) window-system)
+;;   (setq mac-option-modifier 'super)
+;;   (setq mac-command-modifier 'meta)
+;;   )
 
 ;; flycheck
 (add-hook 'prog-mode-hook 'spaceline-toggle-flycheck-info-on)
 (add-hook 'prog-mode-hook 'flycheck-mode)
+
+;; 关闭自动备份
+(setq backup-by-copying t
+      make-backup-files nil
+      create-lockfiles nil)

@@ -21,3 +21,6 @@
 
 ;; 绑定有道快捷键
 (spacemacs/set-leader-keys "oy" 'youdao-dictionary-search-at-point+)
+
+;; 获取当前 URL
+(global-set-key (kbd "C-c l") 'ArchCST/insert-safari-current-tab-url)

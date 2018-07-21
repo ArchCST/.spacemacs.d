@@ -15,6 +15,15 @@
                       ("idea" . ?i) ("someday" . ?s) 
                       ))   
 
+;; org-capture 模板
+(setq org-capture-templates
+      '(("i" "inbox" entry (file+headline "~/Dropbox/OrgCST/inbox.org" "Org-Capture")
+         "* TODO %?\n%U")
+        ("u" "url" entry (file+headline "~/Dropbox/OrgCST/inbox.org" "Org-Capture")
+         "* TODO [#C] %?\n%U\n%(ArchCST/retrieve-safari-current-tab-url)")
+        ("j" "journal" entry (file+datetree "~/Dropbox/OrgCST/journal.org")
+         "* %?\nDATE: %U\n%a")
+        ))
 ;; --------------------------------------------------------------------------
 
 ;; 打开org的config.el
@@ -104,13 +113,10 @@
 ;; 设置 org-capture 的目标文件
 (setq org-default-notes-file "~/Dropbox/OrgCST/inbox.org")
 
-;; org-capture 模板
-(setq org-capture-templates
-      '(("i" "inbox" entry (file+headline "~/Dropbox/OrgCST/inbox.org" "Org-Capture")
-         "* %?")
-         ("j" "journal" entry (file+datetree "~/Dropbox/OrgCST/journal.org")
-          "* %?\nDATE: %U\n %i\n %a")
-        ))
-
 ;; 在当前buffer打开 indirect buffer
 ;; (setq org-indirect-buffer-display 'current-buffer)
+
+;; 设置 org-clock 快捷键
+(global-set-key (kbd "C-c s i") 'org-clock-in)
+(global-set-key (kbd "C-c s o") 'org-clock-out)
+(global-set-key (kbd "C-c s c") 'org-clock-cancel)
