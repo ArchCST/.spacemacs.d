@@ -1,3 +1,19 @@
+;; agenda-files 文件位置
+(setq org-agenda-files '("~/Dropbox/OrgCST"))
+;; 设置org-agenda-files的目录
+(setq ArchCST/org-files "~/Dropbox/OrgCST/")
+(setq ArchCST/org-inbox (concat ArchCST/org-files "inbox" ".org"))
+(setq ArchCST/org-archive (concat ArchCST/org-files "archive" ".org"))
+(setq ArchCST/org-fulfillment (concat ArchCST/org-files "fulfilment" ".org"))
+(setq ArchCST/org-journal (concat ArchCST/org-files "journal" ".org"))
+(setq ArchCST/org-personal (concat ArchCST/org-files "personal" ".org"))
+(setq ArchCST/org-someday (concat ArchCST/org-files "someday" ".org"))
+(setq ArchCST/org-work (concat ArchCST/org-files "work" ".org"))
+;; org-capture 文件位置
+(setq org-default-notes-file ArchCST/org-inbox)
+;; Archive 文件位置，和 headline 的命名（使用 datetree） 
+(setq org-archive-location (concat ArchCST/org-archive "::datetree/* From %s"))
+
 ;; 设置 orgmode 的 TODO 状态
 (setq org-todo-keywords
       '((sequence "TODO(t)" "WIP(w!)" "|" "DONE(d!)" "ABORT(a@/!)")))
@@ -11,25 +27,25 @@
                       ("Mac" . ?m) ("Cellhone" . ?c) ("Win" . ?w) ("Linux" . ?l) ("LinodeServer" . ?L)
                       (:newline . nil)
                       (:newline . nil)
-                      ("idea" . ?i) ("someday" . ?s)
+                      ("idea" . ?i) ("someday" . ?s) ("notes" . ?n)
                       ))
 
 ;; org-capture 模板
 (setq org-capture-templates
-      '(("i" "inbox" entry (file+headline "~/Dropbox/OrgCST/inbox.org" "Org-Capture")
+      '(("i" "inbox" entry (file+headline ArchCST/org-inbox "Org-Capture")
          "* TODO %?\n%U")
-        ("u" "url" entry (file+headline "~/Dropbox/OrgCST/inbox.org" "Org-Capture")
+        ("u" "url" entry (file+headline ArchCST/org-inbox "Org-Capture")
          "* TODO [#C] %?\n%U\n%(ArchCST/retrieve-safari-current-tab-url)")
-        ("j" "journal" entry (file+datetree "~/Dropbox/OrgCST/journal.org")
+        ("j" "journal" entry (file+datetree ArchCST/org-journal)
          "* %?\nDATE: %U\n%a")
         ))
-
-;; 设置org-agenda-files的目录
-(setq ArchCST/org-files "~/Dropbox/OrgCST/")
-(setq org-agenda-files '("~/Dropbox/OrgCST/"))
-(setq org-default-notes-file "~/Dropbox/OrgCST/inbox.org")
-
 ;; --------------------------------------------------------------------------
+
+;; 设置默认 clocktable 产生的方法
+(setq org-clock-clocktable-default-properties '(:maxlevel 4 :scope subtree))
+
+;; 持续时间的显示格式改为小时分钟（默认是天小时分钟）
+(setq org-duration-format 'h:mm)
 
 ;; 在 orgmode 中实现编程语言语法高亮
 (require 'org)
@@ -93,7 +109,7 @@
 (spacemacs/set-leader-keys "ol"  'org-clock-in-last)
 
 ;; SPC o + 首字母打开 org-files
-(defmacro ArchCST/org-open-file (filename)
+(defun ArchCST/org-open-file (filename)
   (interactive)
   (find-file (concat ArchCST/org-files filename ".org")))
 (spacemacs/set-leader-keys "ofi" '(lambda() (interactive) (ArchCST/org-open-file "inbox")))
@@ -105,23 +121,23 @@
 (spacemacs/set-leader-keys "ofw" '(lambda() (interactive) (ArchCST/org-open-file "work")))
 
 ;; 添加 orgmode 常用快捷键
-(spacemacs/set-leader-keys "or" 'org-refile)
-(spacemacs/set-leader-keys "oa" 'org-agenda)
+(global-set-key (kbd "C-c w") 'org-refile)
+(global-set-key (kbd "C-c a") 'org-agenda)
 
-;; 以datetree方式refile文件
-(defun ArchCST/org-read-datetree-date (d)
-  ;; "Parse a time string D and return a date to pass to the datetree functions."
-  (let ((dtmp (nthcdr 3 (parse-time-string d))))
-    (list (cadr dtmp) (car dtmp) (caddr dtmp))))
-(defun ArchCST/org-refile-to-archive-datetree (&optional bfn)
-  ;; "Refile an entry to a datetree under an archive."
-  (interactive)
-  (require 'org-datetree)
-  (let* ((bfn (or bfn (find-file-noselect (expand-file-name "~/Dropbox/OrgCST/archive.org"))))
-         (datetree-date (ArchCST/org-read-datetree-date (org-read-date t nil))))
-    (org-refile nil nil (list nil (buffer-file-name bfn) nil
-                              (with-current-buffer bfn
-                                (save-excursion
-                                  (org-datetree-find-date-create datetree-date)
-                                  (point)))))))
-(spacemacs/set-leader-keys "od" 'ArchCST/org-refile-to-archive-datetree)
+;; ;; 以 datetree 方式 archive 文件
+;; (defun ArchCST/org-read-datetree-date (d)
+;;   ;; "Parse a time string D and return a date to pass to the datetree functions."
+;;   (let ((dtmp (nthcdr 3 (parse-time-string d))))
+;;     (list (cadr dtmp) (car dtmp) (caddr dtmp))))
+;; (defun ArchCST/org-refile-to-archive-datetree (&optional bfn)
+;;   ;; "Refile an entry to a datetree under an archive."
+;;   (interactive)
+;;   (require 'org-datetree)
+;;   (let* ((bfn (or bfn (find-file-noselect (expand-file-name ArchCST/org-archive))))
+;;          (datetree-date (ArchCST/org-read-datetree-date (org-read-date t nil))))
+;;     (org-refile nil nil (list nil (buffer-file-name bfn) nil
+;;                               (with-current-buffer bfn
+;;                                 (save-excursion
+;;                                   (org-datetree-find-date-create datetree-date)
+;;                                   (point)))))))
+;; (spacemacs/set-leader-keys "oa" 'ArchCST/org-refile-to-archive-datetree)

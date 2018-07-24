@@ -2,7 +2,7 @@
 ;; (line-number-mode t)
 
 ;; 自动加载外部更改的文件
-(auto-revert-mode t)
+(global-auto-revert-mode t)
 
 ;; ;; 关闭启动画面
 ;; (setq inhibit-splash-screen nil)
