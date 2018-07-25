@@ -9,9 +9,9 @@
   (let ((result (do-applescript
                  (concat
                   "set frontmostApplication to path to frontmost application\n"
-                  "tell application \"Safari\"\n"
-                  "set theUrl to get URL of current tab of first window\n"
-                  "set theTitle to get name of current tab of first window\n"
+                  "tell application \"Google Chrome\"\n"
+                  "set theUrl to get URL of active tab of first window\n"
+                  "set theTitle to get name of active tab of first window\n"
                   "set theResult to {get \"[[\", theUrl, \"][\", theTitle, \"]]\"}\n"
                   "end tell\n"
                   "activate application (frontmostApplication as text)\n"
