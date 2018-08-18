@@ -7,8 +7,8 @@
 ;; ;; 关闭启动画面
 ;; (setq inhibit-splash-screen nil)
 
-;; 为编程语言类的 major mode 默认启用删除多个空格
-(add-hook 'prog-mode-hook 'spacemacs/toggle-hungry-delete-on)
+;;;; 为编程语言类的 major mode 默认启用删除多个空格
+;;(add-hook 'prog-mode-hook 'spacemacs/toggle-hungry-delete-on)
 
 ;; 设置 Linux 默认浏览器
 (when (and (spacemacs/system-is-linux) window-system)

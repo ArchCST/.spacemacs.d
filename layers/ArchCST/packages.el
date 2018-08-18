@@ -33,14 +33,17 @@
 
 (defun ArchCST/init-org-page ()
   (spacemacs/declare-prefix "ab" "blog")
-  (use-package org-page
-    :config (progn (setq op/repository-directory "~/org-page"
+  (use-package org-page;
+    :config (progn (setq op/repository-directory "~/blog"
                          op/site-main-title "ArchCST's blog"
-                         op/site-sub-title "Try org-page"
+                         op/site-sub-title "=============> 修行"
                          op/site-domain "https://ArchCST.github.io"
-                         op/personal-github-link "http://github.com/ArchCST")
+                         op/personal-github-link "http://github.com/ArchCST"
+                         ;; op/category-ignore-list '()
+                         )
                    (spacemacs/set-leader-keys
-                     "abp" 'op/do-publication-and-preview-site
-                     "abP" 'op/do-publication
-                     "abn" 'op/new-post))))
+                     "abP" 'op/do-publication-and-preview-site
+                     "abp" 'op/do-publication
+                     "abn" 'op/new-post
+                     "abt" 'op/insert-options-template))))
 

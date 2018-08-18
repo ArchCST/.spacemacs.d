@@ -15,6 +15,7 @@
 
 ;; 获取当前 URL
 (spacemacs/set-leader-keys "dl" 'ArchCST/insert-safari-current-tab-url)
+(global-set-key (kbd "C-c C-;") 'ArchCST/insert-safari-current-tab-url)
 
 ;; 绑定有道快捷键
 (spacemacs/set-leader-keys "df" 'youdao-dictionary-search-at-point+)

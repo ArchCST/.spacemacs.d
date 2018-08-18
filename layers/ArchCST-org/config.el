@@ -42,7 +42,7 @@
 ;; --------------------------------------------------------------------------
 
 ;; 设置默认 clocktable 产生的方法
-(setq org-clock-clocktable-default-properties '(:maxlevel 4 :scope subtree))
+(setq org-clock-clocktable-default-properties '(:maxlevel 3 :scope file))
 
 ;; 持续时间的显示格式改为小时分钟（默认是天小时分钟）
 (setq org-duration-format 'h:mm)
@@ -101,12 +101,13 @@
 ;; ------------------------------ keybindings ------------------------------ 
 
 ;; 设置 org-clock 快捷键
-(spacemacs/set-leader-keys "oi"  'org-clock-in)
-(spacemacs/set-leader-keys "oo"  'org-clock-out)
-(spacemacs/set-leader-keys "oc"  'org-clock-cancel)
-(spacemacs/set-leader-keys "og"  'org-clock-goto)
-(spacemacs/set-leader-keys "oe"  'org-evaluate-time-range)
-(spacemacs/set-leader-keys "ol"  'org-clock-in-last)
+(spacemacs/set-leader-keys "oi" 'org-clock-in)
+(spacemacs/set-leader-keys "oo" 'org-clock-out)
+(spacemacs/set-leader-keys "oc" 'org-clock-cancel)
+(spacemacs/set-leader-keys "og" 'org-clock-goto)
+(spacemacs/set-leader-keys "oe" 'org-evaluate-time-range)
+(spacemacs/set-leader-keys "ol" 'org-clock-in-last)
+(spacemacs/set-leader-keys "op" 'org-priority)
 
 ;; SPC o + 首字母打开 org-files
 (defun ArchCST/org-open-file (filename)
