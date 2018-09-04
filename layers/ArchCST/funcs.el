@@ -41,3 +41,31 @@
 
 ;; 解决远程服务器响应缓慢
 (setq projectile-mode-line "Projectile")
+
+;; transfer .org file to markdown file for Hexo
+(defun ArchCST/hexo-ox-gfm (&optional async subtreep visible-only)
+  (interactive)
+  (let ((outfile (org-export-output-file-name ".md" subtreep "~/git/CSTHexo/source/_posts")))
+    (org-export-to-file 'gfm outfile async subtreep visible-only)))
+(spacemacs/set-leader-keys "dhe" 'ArchCST/hexo-ox-gfm)
+
+;; insert metadata at the top of file for Hexo
+(defun ArchCST/hexo-insert-metadata ()
+  (interactive)
+  (evil-goto-first-line)
+  (insert-before-markers "#+OPTIONS: toc:nil \\n:t
+title: 
+date: 
+updated: 
+comments: true
+tags:
+  - 
+categories: 
+layout: post
+permalink: 
+------
+")
+  (evil-goto-line 2)
+  (evil-append-line 0)
+  )
+(spacemacs/set-leader-keys "dhi" 'ArchCST/hexo-insert-metadata)
