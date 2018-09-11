@@ -64,8 +64,8 @@ move it to trash."
 (defun ArchCST-o2h/export-all-files ()
   "This function will use ox-gfm.el to export all .org fills in `hexo-raw-dir'
 into your `hexo-source-dir', will automatically find the same directories name
-and exportto it.
-Will only export when files in `hexo-raw-dir' is newer than `hexo-source-dir'
+and export to it.
+Will only export when files in `hexo-raw-dir' is newer than in `hexo-source-dir'
 to make this function acts more faster.
 Recommendation: only use _posts and _drafts directories in your RAW directory
 to store your .org files, to prevent more unexpected behaviors for now.
@@ -81,7 +81,6 @@ Key binding: SPC d h E , can be modified in keybindings.el"
   (message "Org to Hexo: export all files DONE!")
   )
 
-;; TODO choose directory
 (defun ArchCST-o2h/export-this-file ()
   "This function wiil export current buffer to a directory from your choice. Notice
 that if you use `ArchCST-org/clean-none-exists' after this you might lose this file's
@@ -99,20 +98,44 @@ Binding key: SPC d h e , can be modified in keybindings.el"
     (org-export-to-file 'gfm outfile))
   (message "Org to Hexo: export this file DONE!"))
 
+(defun ArchCST-o2h/hyper ()
+  "This function will call `ArchCST-o2h/export-all-files' and `ArchCST-o2h/clean-none-exists'
+together."
+  (interactive)
+  (ArchCST-o2h/export-all-files)
+  (ArchCST-o2h/clean-none-exists)
+  (message "Org to Hexo: exported and cleaned, good to go!")
+  )
+
+(defun ArchCST-o2h/new-draft ()
+  "This function will create a new .org file in your `hexo-raw-dir' directory and
+automatically insert front-matter for it.
+If the file already exited, will switch to it."
+  (interactive)
+  (let* ((new-draft-file (concat hexo-raw-dir "/_drafts/" (read-string "New draft name: ") ".org")))
+    (if (file-exists-p new-draft-file)
+        (progn (find-file new-draft-file)
+               (message "Draft [ %s ] exists, switched to it!" buffer-file-truename))
+      (progn (find-file new-draft-file)
+             (ArchCST-o2h/insert-front-matter)
+             (save-buffer)
+             (message "New draft [ %s ] created and saved!" buffer-file-truename)
+             ))))
+
  ;; insert
 
-(defun ArchCST-o2h/insert-frontmater ()
+(defun ArchCST-o2h/insert-front-matter ()
   "This function will insert front-mater at the beginning of current buffer, after
 inserted, your cursor will be located at TITLE so you could white your title immediately
 by C W (vim keybindings).
 
 o2h layer use ox-gfm.el to export files, so you need to be sure there's no html
-lable in the front-mater (.e.g time label) otherwise ox-gfm will transcode it.
+lable in the front-matter (.e.g time label) otherwise ox-gfm will transcode it.
 
 Binding key: SPC d h i RET
 "
   (interactive)
-  (evil-goto-first-line)
+  (goto-char (point-min))
   (insert-before-markers (concat "#+OPTIONS: toc:nil \\n:t
 title: untitled
 date: " (format-time-string "%Y-%m-%d" (current-time))
@@ -124,8 +147,10 @@ categories: uncategorized
 layout: post
 ------
 "))
-  (evil-goto-line 2)
-  (evil-forward-word-begin 2)
+  (goto-char (point-min))
+  (forward-line 1)
+  (forward-char 7)
+  (scroll-up 0)
   )
 
 (defun ArchCST-o2h/insert-more ()
