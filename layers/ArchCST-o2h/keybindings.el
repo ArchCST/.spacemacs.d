@@ -29,3 +29,7 @@
 
 (spacemacs/set-leader-keys "dhii" 'ArchCST-o2h/insert-img-url)
 
+ ;; declare prefix keys
+
+(spacemacs/declare-prefix "dh" "org to hexo")
+(spacemacs/declare-prefix "dhi" "insert labels")

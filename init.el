@@ -353,6 +353,7 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   (require 'helm)
   (setq spaceline-org-clock-p t)
+  (global-centered-cursor-mode t)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
