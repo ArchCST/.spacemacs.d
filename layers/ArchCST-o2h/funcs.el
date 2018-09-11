@@ -11,8 +11,8 @@
 ;; code:
 
 ;; Set your RAW-DIR and SOURCE-DIR here
-(setq hexo-raw-dir (expand-file-name "~/git/CSTHexo/raw"))
-(setq hexo-source-dir (expand-file-name "~/git/CSTHexo/source"))
+(defvar hexo-raw-dir (expand-file-name "~/git/CSTHexo/raw"))
+(defvar hexo-source-dir (expand-file-name "~/git/CSTHexo/source/"))
 
 (defun ArchCST-o2h/set-raw-files-path ()
   "This function will return a var named hexo-raw-files-path contains all
@@ -42,6 +42,7 @@ were not opened in emacs before called this function."
         (org-export-to-file 'gfm md-file))
     (unless open (kill-buffer org-file-buffer))))
 
+;; TODO replace output directory by hexo-source-dir 
 (defun ArchCST-o2h/export-all-files ()
   "This function will use ox-gfm.el to export all fills into your SOURCE
 directory, will automatically find the same directories name and export
@@ -51,8 +52,9 @@ to store your .org files, to prevent more unexpected behaviors for now.
 I'll update this function when it became a emacs package.
 Key binding: SPC d h E , can be modified in keybindings.el"
   (interactive)
+  (ArchCST-o2h/set-raw-files-path)
   (dolist (i hexo-raw-files-path)
-    (let* ((o (replace-regexp-in-string "\.org$" "\.md" (replace-regexp-in-string "/raw/" "/source/" i))))
+    (let* ((o (replace-regexp-in-string "\.org$" "\.md" (replace-regexp-in-string hexo-raw-dir hexo-source-dir i))))
       (ArchCST-o2h/hexo-org-to-md i o)
       ))
   (message "Org to Hexo: export all files DONE!")
@@ -71,35 +73,119 @@ If \"Output file not writable\" returned please make sure you have that director
 Binding key: SPC d h e , can be modified in keybindings.el"
   (interactive)
   (save-buffer)
-  (let* ((path (read-file-name "New Directory: "))
-         (outfile (org-export-output-file-name ".md" path)))
-    (org-export-to-file 'gfm outfile )))
+  (let* ((outfile (org-export-output-file-name ".md" nil (concat hexo-source-dir "/_posts/"))))
+    (org-export-to-file 'gfm outfile)))
 
-;; TODO insert current date as default date
-;; insert metadata at the top of file for Hexo
+ ;; insert
+
 (defun ArchCST-o2h/insert-frontmater ()
-  "This function will insert frontmater in the beginning of current buffer, after
-inserted your cursor will be located at the end of TITLE line and automatically
-switch into insert mode so you could white your title immediately.
+  "This function will insert front-mater at the beginning of current buffer, after
+inserted, your cursor will be located at TITLE so you could white your title immediately
+by C W (vim keybindings).
 
 o2h layer use ox-gfm.el to export files, so you need to be sure there's no html
-lable in the frontmater (.e.g time lable) otherwise ox-gfm will transcode it.
+lable in the front-mater (.e.g time label) otherwise ox-gfm will transcode it.
 
 Binding key: SPC d h i RET
 "
   (interactive)
   (evil-goto-first-line)
-  (insert-before-markers "#+OPTIONS: toc:nil \\n:t
-title: 
-date: 
-updated: 
+  (insert-before-markers (concat "#+OPTIONS: toc:nil \\n:t
+title: untitled
+date: " (format-time-string "%Y-%m-%d" (current-time))
+"\nupdated:
 comments: true
 tags:
-  - 
-categories: 
+  - tag1
+categories: uncategorized
 layout: post
 ------
-")
+"))
   (evil-goto-line 2)
-  (evil-append-line 0)
+  (evil-forward-word-begin 2)
   )
+
+(defun ArchCST-o2h/insert-more ()
+  "Insert html lable: more"
+  (interactive)
+  (evil-insert-newline-below)
+  (insert-before-markers "#+HTML: <!-- more -->")
+  )
+
+(defun ArchCST-o2h/insert-quote ()
+  "Insert lable: quote"
+  (interactive)
+  (evil-insert-newline-below)
+  (insert-before-markers "{% cq %}\n\n{% endcq %}")
+  (evil-previous-line)
+  )
+
+(defun ArchCST-o2h/insert-blockquote ()
+  "Insert lable: blockquote"
+  (interactive)
+  (evil-insert-newline-below)
+  (insert-before-markers "{% blockquote %}\n\n{% endblockquote %}")
+  (evil-previous-line)
+  )
+
+;; bootstrap callout
+(defun ArchCST-o2h/insert-bc-default ()
+  "Insert lable: bootstrap-callout default"
+  (interactive)
+  (evil-insert-newline-below)
+  (insert-before-markers "{% note default %}\n\n{% endnote %}")
+  (evil-previous-line)
+  )
+
+(defun ArchCST-o2h/insert-bc-primary ()
+  "Insert lable: bootstrap-callout primary"
+  (interactive)
+  (evil-insert-newline-below)
+  (insert-before-markers "{% note primary %}\n\n{% endnote %}")
+  (evil-previous-line)
+  )
+
+(defun ArchCST-o2h/insert-bc-success ()
+  "Insert lable: bootstrap-callout success"
+  (interactive)
+  (evil-insert-newline-below)
+  (insert-before-markers "{% note success %}\n\n{% endnote %}")
+  (evil-previous-line)
+  )
+
+(defun ArchCST-o2h/insert-bc-info ()
+  "Insert lable: bootstrap-callout info"
+  (interactive)
+  (evil-insert-newline-below)
+  (insert-before-markers "{% note info %}\n\n{% endnote %}")
+  (evil-previous-line)
+  )
+
+(defun ArchCST-o2h/insert-bc-warning ()
+  "Insert lable: bootstrap-callout warning"
+  (interactive)
+  (evil-insert-newline-below)
+  (insert-before-markers "{% note warning %}\n\n{% endnote %}")
+  (evil-previous-line)
+  )
+
+(defun ArchCST-o2h/insert-bc-danger ()
+  "Insert lable: bootstrap-callout danger"
+  (interactive)
+  (evil-insert-newline-below)
+  (insert-before-markers "{% note danger %}\n\n{% endnote %}")
+  (evil-previous-line)
+  )
+
+(defun ArchCST-o2h/insert-img-url ()
+  "Insert url of an image form the kill-ring, if it's not a picture, you
+might need to input it manually"
+  (interactive)
+  ;; if clipboard is an img
+  (let ((img-url (replace-regexp-in-string "\n$" "" (car kill-ring))))
+    (unless (string-match "\\.\\(jpg\\|png\\|jpeg\\|gif\\|bmp\\|ico\\|tif\\)$" img-url)
+      (setq img-url (read-string "url: ")))
+
+    (evil-insert-newline-below)
+    (insert-before-markers (concat "#+HTML: <img src=\"" img-url "\" alt=\"img\" width=\"\" />"))
+    ))
