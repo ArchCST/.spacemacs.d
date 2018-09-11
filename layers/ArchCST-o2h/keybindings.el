@@ -12,6 +12,7 @@
 
 (spacemacs/set-leader-keys "dhe" 'ArchCST-o2h/export-this-file)
 (spacemacs/set-leader-keys "dhE" 'ArchCST-o2h/export-all-files)
+(spacemacs/set-leader-keys "dhc" 'ArchCST-o2h/clean-none-exists)
 
  ;; insert
 

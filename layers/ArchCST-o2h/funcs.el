@@ -12,17 +12,24 @@
 
 ;; Set your RAW-DIR and SOURCE-DIR here
 (defvar hexo-raw-dir (expand-file-name "~/git/CSTHexo/raw"))
-(defvar hexo-source-dir (expand-file-name "~/git/CSTHexo/source/"))
+(defvar hexo-source-dir (expand-file-name "~/git/CSTHexo/source"))
 
-(defun ArchCST-o2h/set-raw-files-path ()
-  "This function will return a var named hexo-raw-files-path contains all
-files absolute path in raw directory, including all subdirectories. please
-make sure hexo-raw-dir existed.
-Only files with extension .org can be returned."
+(defun ArchCST-o2h/get-org-files-paths ()
+  "Return a var named hexo-org-files-path contains all .org files absolute path in raw directory,
+including all subdirectories. Make sure `hexo-raw-dir' existed."
   (interactive)
-  (setq hexo-raw-files-path
+  (setq hexo-org-files-path
         (split-string (shell-command-to-string
                        (concat "find " hexo-raw-dir " -name \"*.org\"")) "\n" t))
+  )
+
+(defun ArchCST-o2h/get-md-files-paths ()
+  "Return a var named hexo-md-files-path contains all .md files absolute path in source directory,
+including all subdirectories. Make sure `hexo-source-dir' existed."
+  (interactive)
+  (setq hexo-md-files-path
+        (split-string (shell-command-to-string
+                       (concat "find " hexo-source-dir " -name \"*.md\"")) "\n" t))
   )
 
 ;; https://emacs.stackexchange.com/questions/44622/how-to-use-org-export-to-export-from-a-file-in-emacs
@@ -42,39 +49,55 @@ were not opened in emacs before called this function."
         (org-export-to-file 'gfm md-file))
     (unless open (kill-buffer org-file-buffer))))
 
-;; TODO replace output directory by hexo-source-dir 
+(defun ArchCST-o2h/clean-none-exists ()
+  "Find raw files of filse in `hexo-source-dir', if not exist, ask user if
+move it to trash."
+  (interactive)
+  (ArchCST-o2h/get-md-files-paths)
+  (dolist (element hexo-md-files-path)
+    (if (not (f-exists-p (replace-regexp-in-string "\.md$" "\.org" (replace-regexp-in-string hexo-source-dir hexo-raw-dir element))))
+        (if (y-or-n-p (concat "Raw file of: [ " (replace-regexp-in-string hexo-source-dir "" element) " ] doesn't exist, delete it? "))
+            (delete-file element t))))
+  (recentf-cleanup)
+  (message "Org to Hexo: clean none exists DONE!"))
+
 (defun ArchCST-o2h/export-all-files ()
-  "This function will use ox-gfm.el to export all fills into your SOURCE
-directory, will automatically find the same directories name and export
-to it.
+  "This function will use ox-gfm.el to export all .org fills in `hexo-raw-dir'
+into your `hexo-source-dir', will automatically find the same directories name
+and exportto it.
+Will only export when files in `hexo-raw-dir' is newer than `hexo-source-dir'
+to make this function acts more faster.
 Recommendation: only use _posts and _drafts directories in your RAW directory
 to store your .org files, to prevent more unexpected behaviors for now.
 I'll update this function when it became a emacs package.
 Key binding: SPC d h E , can be modified in keybindings.el"
   (interactive)
-  (ArchCST-o2h/set-raw-files-path)
-  (dolist (i hexo-raw-files-path)
+  (ArchCST-o2h/get-org-files-paths)
+  (dolist (i hexo-org-files-path)
     (let* ((o (replace-regexp-in-string "\.org$" "\.md" (replace-regexp-in-string hexo-raw-dir hexo-source-dir i))))
-      (ArchCST-o2h/hexo-org-to-md i o)
+      (if (file-newer-than-file-p i o)
+          (ArchCST-o2h/hexo-org-to-md i o))
       ))
   (message "Org to Hexo: export all files DONE!")
   )
 
+;; TODO choose directory
 (defun ArchCST-o2h/export-this-file ()
   "This function wiil export current buffer to a directory from your choice. Notice
-that if you use `ArchCST-org/export-all-files' after this you might lose this file's
-exported due to this one is not in your RAW-DIR. Make sure this file is in the
-RAW-DIR to prevent this happen.
+that if you use `ArchCST-org/clean-none-exists' after this you might lose this file's
+exported if this one is not in your RAW-DIR. Make sure this file is in the RAW-DIR to
+prevent this happening.
 
-Recommendation: use this function when only added one file to your RAW directory.
+Recommendation: use this function when only modified one file in your RAW directory.
 
 If \"Output file not writable\" returned please make sure you have that directory existed.
 
 Binding key: SPC d h e , can be modified in keybindings.el"
   (interactive)
   (save-buffer)
-  (let* ((outfile (org-export-output-file-name ".md" nil (concat hexo-source-dir "/_posts/"))))
-    (org-export-to-file 'gfm outfile)))
+  (let* ((outfile (org-export-output-file-name ".md" nil (read-file-name "Destination: "))))
+    (org-export-to-file 'gfm outfile))
+  (message "Org to Hexo: export this file DONE!"))
 
  ;; insert
 
