@@ -49,15 +49,50 @@ were not opened in emacs before called this function."
         (org-export-to-file 'gfm md-file))
     (unless open (kill-buffer org-file-buffer))))
 
+(defun ArchCST-o2h/append-to-ignore-file (file)
+  "This function will add a new line in .o2hignore with FILE"
+  (interactive)
+  (unless (file-exists-p (concat hexo-raw-dir "/.o2hignore"))
+    (ArchCST-o2h/generate-ignore-file))
+  (message "Org to Hexo: [ %s ] exists, reading..." o2hignore-file)
+  (write-region (concat file "\n") nil o2hignore-file 'append))
+
+(defun ArchCST-o2h/generate-ignore-file ()
+  "This function will generate a .o2hignore file in your `hexo-raw-dir', this
+file is invisible if you're in Linux based OS (including Mac OS X) due to the
+. in the beginning of .o2hignore filename."
+  (interactive)
+  (setq o2hignore-file (concat hexo-raw-dir "/.o2hignore"))
+  (if (not (file-exists-p o2hignore-file))
+      (progn
+        (write-region "This is the .o2hignore file which enables you to ignore files when using ArchCST-o2h/clean-none-exists function. Please do NOT touch this unless you know what you're doing.\n" nil o2hignore-file)
+        (message "Org to Hexo: generate [ %s ] DONE!" o2hignore-file))
+    (message "Org to Hexo: .o2hignore already existed!")))
+
+(defun ArchCST-o2h/get-ignore-list ()
+  "This function will get ignore list from .o2hignore file."
+  (interactive)
+  (unless (file-exists-p (concat hexo-raw-dir "/.o2hignore"))
+    (ArchCST-o2h/generate-ignore-file))
+  (setq o2hignore-file (concat hexo-raw-dir "/.o2hignore"))
+  (setq o2hignore-list (split-string (file-to-string o2hignore-file) "\n" t)))
+
 (defun ArchCST-o2h/clean-none-exists ()
   "Find raw files of filse in `hexo-source-dir', if not exist, ask user if
 move it to trash."
   (interactive)
   (ArchCST-o2h/get-md-files-paths)
-  (dolist (element hexo-md-files-path)
-    (if (not (f-exists-p (replace-regexp-in-string "\.md$" "\.org" (replace-regexp-in-string hexo-source-dir hexo-raw-dir element))))
-        (if (y-or-n-p (concat "Raw file of: [ " (replace-regexp-in-string hexo-source-dir "" element) " ] doesn't exist, delete it? "))
-            (delete-file element t))))
+  (ArchCST-o2h/get-ignore-list)
+  (let* (user-choise)
+    (dolist (element hexo-md-files-path)
+      (if (and (not (f-exists-p (replace-regexp-in-string "\.md$" "\.org" (replace-regexp-in-string hexo-source-dir hexo-raw-dir element))))
+               (not (member element o2hignore-list)))
+          (progn
+            (setq user-choise (read-key (concat "Raw file of: [ " (replace-regexp-in-string hexo-source-dir "" element) " ] doesn't exist, How to proceed? [ a: Add to ignore list ] [ d: Delete .md file ] [ other: ignore ] : ")))
+            (when (equal user-choise 97)
+              (ArchCST-o2h/append-to-ignore-file element))
+            (when (equal user-choise 100)
+              (delete-file element t))))))
   (recentf-cleanup)
   (message "Org to Hexo: clean none exists DONE!"))
 
@@ -71,6 +106,7 @@ Recommendation: only use _posts and _drafts directories in your RAW directory
 to store your .org files, to prevent more unexpected behaviors for now.
 I'll update this function when it became a emacs package.
 Key binding: SPC d h E , can be modified in keybindings.el"
+  ;; TODO check ignore, if exists prompt warning.
   (interactive)
   (ArchCST-o2h/get-org-files-paths)
   (dolist (i hexo-org-files-path)
