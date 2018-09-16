@@ -10,49 +10,26 @@
 ;;; License: GPLv3
 ;; code:
 
+(require 'ox)
+(require 'ox-gfm)
+
 ;; Set your RAW-DIR and SOURCE-DIR here
+
 (defvar hexo-raw-dir (expand-file-name "~/git/CSTHexo/raw"))
 (defvar hexo-source-dir (expand-file-name "~/git/CSTHexo/source"))
 
-(defun ArchCST-o2h/get-org-files-paths ()
-  "Return a var named hexo-org-files-path contains all .org files absolute path in raw directory,
+(defun o2h/get-raw-files-list ()
+  "Return a var named hexo-raw-files-list contains all .org files absolute path in raw directory,
 including all subdirectories. Make sure `hexo-raw-dir' existed."
   (interactive)
-  (setq hexo-org-files-path
-        (split-string (shell-command-to-string
-                       (concat "find " hexo-raw-dir " -name \"*.org\"")) "\n" t))
-  )
-
-(defun ArchCST-o2h/get-md-files-paths ()
-  "Return a var named hexo-md-files-path contains all .md files absolute path in source directory,
-including all subdirectories. Make sure `hexo-source-dir' existed."
-  (interactive)
-  (setq hexo-md-files-path
-        (split-string (shell-command-to-string
-                       (concat "find " hexo-source-dir " -name \"*.md\"")) "\n" t))
-  )
-
-(defun ArchCST-o2h/get-corresponding-path (file)
-  "This function will return the corresponding path of FILE, only return
-the path, even the file doesn't exist.
-If error, it might happening because you put your .org file into your `hexo-source-dir'
-or put .md files in `hexo-raw-dir'.
-`hexo-source-dir' is for Hexo to generate static pages with .md files
-`hexo-raw-dir' is for org-to-hexo to export .org files to .md files.
-So you should NOT put .org files in `hexo-source-dir' or put .md files in `hexo-raw-dir'."
-  (interactive)
-  (if (and (string= "org" (file-name-extension file))
-           (string-match-p (concat "^" hexo-raw-dir) file))
-      (replace-regexp-in-string "\.org$" "\.md" (replace-regexp-in-string hexo-raw-dir hexo-source-dir file))
-    (if (and (string= "md" (file-name-extension file))
-             (string-match-p (concat "^" hexo-source-dir) file))
-        (replace-regexp-in-string "\.md$" "\.org" (replace-regexp-in-string hexo-source-dir hexo-raw-dir file))
-      "Org to Hexo: ERROE! Might happening by put .org files in source-dir or otherwise.")
-    ))
+  (setq hexo-raw-files-list (directory-files-recursively hexo-raw-dir "")
+        ;; (split-string (shell-command-to-string
+        ;;                (concat "find " hexo-raw-dir " -name \"*.org\"")) "\n" t)
+  ))
 
 ;; https://emacs.stackexchange.com/questions/44622/how-to-use-org-export-to-export-from-a-file-in-emacs
 ;; TODO raw-to-source, add copy .md files in raw to source.
-(defun ArchCST-o2h/hexo-org-to-md (org-file md-file)
+(defun o2h/org-to-md (org-file md-file)
   "Export ORG-FILE to MD-FILE.
 This function will export .org file to .md file, and close buffers which
 were not opened in emacs before called this function."
@@ -65,25 +42,118 @@ were not opened in emacs before called this function."
         (open (find-buffer-visiting org-file))
         (org-file-buffer (find-file-noselect org-file)))
     (with-current-buffer org-file-buffer
-        (org-export-to-file 'gfm md-file))
+      (org-export-to-file 'gfm md-file))
     (unless open (kill-buffer org-file-buffer))))
 
-(defun ArchCST-o2h/get-o2hignore ()
+(defun o2h/md-to-md (raw-md source-md)
+  "Export .md file form `hexo-raw-dir' to `hexo-source-dir'"
+  (interactive)
+  (unless (string= "md" (file-name-extension raw-md))
+    (error "raw-md must have an .md extension."))
+  (unless (string= "md" (file-name-extension source-md))
+    (error "source-md must have an .md extension."))
+  (copy-file raw-md source-md t))
+
+(defun o2h/get-corresponding-path (file)
+  "Get corresponding file path in `hexo-source-dir' for `hexo-raw-dir' files.
+If FILE with extension .org will return a string contains .md extension, with
+other extensions will return with the same extensions"
+  (interactive)
+  (if (string-match-p (concat "^" hexo-raw-dir) file)
+      (if (string= "org" (file-name-extension file))
+          (replace-regexp-in-string "\.org$" "\.md" (replace-regexp-in-string hexo-raw-dir hexo-source-dir file))
+        (replace-regexp-in-string hexo-raw-dir hexo-source-dir file))
+    ))
+
+(defun o2h/find-duplicate ()
+  "If an .org file has a same named .md file, return the .md file's name."
+  (o2h/get-raw-files-list)
+  (catch 'loop
+    (dolist (org-file hexo-raw-files-list)
+      (let ((md-file (replace-regexp-in-string "\.org$" "\.md" org-file)))
+        (when (and (string= "org" (file-name-extension org-file))
+                 (f-exists-p md-file))
+          (setq o2h-duplicate-md md-file)
+          (setq o2h-duplicate-org org-file)
+          (throw 'loop o2h-duplicate-md))))))
+
+(defun o2h/rename-org-file (file &optional reason)
+  "Rename org-file"
+  (let* ((rename-prompt (concat reason "\n"
+                                "Rename " file "\n"
+                                "To:    " (file-name-directory file)))
+         (new-org-name (concat (file-name-directory file)
+                               (read-string rename-prompt))))
+    (while (file-exists-p new-org-name)
+        (progn
+          (setq rename-prompt (concat new-org-name " existed\n" rename-prompt))
+          (setq new-org-name (concat (file-name-directory file)
+                                     (read-string rename-prompt))))
+      )))
+
+(defun o2h/fix-duplicate ()
+  "Check if files in `hexo-raw-dir' have same file with .md extensions, if yes ask user to fix it."
+  (interactive)
+  (while (o2h/find-duplicate)
+    (o2h/rename-org-file o2h-duplicate-org (concat "File:  " o2h-duplicate-md " existed, rename to prevent overwrite it."))
+    )
+  )
+
+
+
+
+(defun o2h/export-raw-to-source ()
+  "This function will use ox-gfm.el to export all .org fills in `hexo-raw-dir'
+into your `hexo-source-dir', will automatically find the same directories name
+and export to it.
+Will only export when files in `hexo-raw-dir' is newer than in `hexo-source-dir'
+to make this function acts more faster.
+Recommendation: only use _posts and _drafts directories in your RAW directory
+to store your .org files, to prevent more unexpected behaviors for now.
+I'll update this function when it became a emacs package."
+  ;; TODO check conflict
+  ;; TODO check directory existed
+  (interactive)
+  (o2h/get-raw-files-list)
+  (dolist (i hexo-raw-files-list)
+    (let* ((o (o2h/get-corresponding-path i)))
+      (if (file-newer-than-file-p i o)
+          ;;(o2h/org-to-md i o)
+          (if (string= "org" (file-name-extension i))
+              (o2h/org-to-md i o)
+            (copy-file i o t)))))
+  (message "Org to Hexo: export all files DONE!"))
+
+(o2h/export-raw-to-source)
+
+ ;; old version
+;; (defun o2h/get-md-files-paths ()
+;;   "Return a var named hexo-md-files-path contains all .md files absolute path in source directory,
+;; including all subdirectories. Make sure `hexo-source-dir' existed."
+;;   (interactive)
+;;   (setq hexo-md-files-path
+;;         (split-string (shell-command-to-string
+;;                        (concat "find " hexo-source-dir " -name \"*.md\"")) "\n" t))
+;;   )
+
+
+
+(defun o2h/get-o2hignore ()
   "This function will get ignore list from .o2hignore file."
   (interactive)
   (unless (file-exists-p (concat hexo-raw-dir "/.o2hignore"))
-    (ArchCST-o2h/generate-o2hignore))
+    (o2h/generate-o2hignore))
   (setq o2hignore-file (concat hexo-raw-dir "/.o2hignore"))
   (setq o2hignore-list (split-string (file-to-string o2hignore-file) "\n" t)))
 
-(defun ArchCST-o2h/append-to-ignore-file (file)
+(defun o2h/append-to-ignore-file (file)
   "This function will add a new line in .o2hignore with FILE"
   (interactive)
-  (ArchCST-o2h/get-o2hignore)
+  (o2h/get-o2hignore)
   (write-region (concat file "\n") nil o2hignore-file 'append)
   (message "Org to Hexo: append to .o2hignore file DONE!"))
 
-(defun ArchCST-o2h/generate-o2hignore ()
+(defun o2h/generate-o2hignore ()
   "This function will generate a .o2hignore file in your `hexo-raw-dir', this
 file is invisible if you're in Linux based OS (including Mac OS X) due to the
 . in the beginning of .o2hignore filename."
@@ -91,17 +161,17 @@ file is invisible if you're in Linux based OS (including Mac OS X) due to the
   (setq o2hignore-file (concat hexo-raw-dir "/.o2hignore"))
   (if (not (file-exists-p o2hignore-file))
       (progn
-        (write-region "This is the .o2hignore file which enables you to ignore files when using ArchCST-o2h/clean-none-exists function. Please do NOT touch this unless you know what you're doing.\n" nil o2hignore-file)
+        (write-region "This is the .o2hignore file which enables you to ignore files when using o2h/clean-none-exists function. Please do NOT touch this unless you know what you're doing.\n" nil o2hignore-file)
         (message "Org to Hexo: generate [ %s ] DONE!" o2hignore-file))
     (message "Org to Hexo: .o2hignore already existed!")))
 
-(defun ArchCST-o2h/o2hignore-conflict (file)
+(defun o2h/o2hignore-conflict (file)
   "Check if FILE exists in o2hignore, if confilct ask user to choose:
 1. Delete the line in .o2hignore and overwrite the .md file.
 2. Rename the file.
 3. About."
-  (ArchCST-o2h/get-o2hignore)
-  (if (member (ArchCST-o2h/get-corresponding-path file) o2hignore-list)
+  (o2h/get-o2hignore)
+  (if (member (o2h/get-corresponding-path file) o2hignore-list)
       (let* ((user-choise (read-key (concat file " :
 File's corresponding reference found in your o2hignore-file!
 You've already have a same named .md file in your source-dir and you added in your ignore list.
@@ -113,22 +183,22 @@ How to proceed?
           ;; TODO
           )
         (when (equal user-choise 50)
-          (delete (ArchCST-o2h/get-corresponding-path file) o2hignore-list)
+          (delete (o2h/get-corresponding-path file) o2hignore-list)
           (delete-file o2hignore-file)
           (dolist (element o2hignore-list)
             (write-region (concat element "\n") nil o2hignore-file 'append))
         )
     )))
 
-(defun ArchCST-o2h/clean-none-exists ()
+(defun o2h/clean-none-exists ()
   "Find raw files of filse in `hexo-source-dir', if not exist, ask user if
 move it to trash."
   (interactive)
-  (ArchCST-o2h/get-md-files-paths)
-  (ArchCST-o2h/get-o2hignore)
+  (o2h/get-md-files-paths)
+  (o2h/get-o2hignore)
   (let* (user-choise)
     (dolist (element hexo-md-files-path)
-      (if (and (not (f-exists-p (ArchCST-o2h/get-corresponding-path element)))
+      (if (and (not (f-exists-p (o2h/get-corresponding-path element)))
                (not (member element o2hignore-list)))
           (progn
             (setq user-choise (read-key (concat "Raw file of: [ " (replace-regexp-in-string hexo-source-dir "" element) " ] doesn't exist, How to proceed?\n
@@ -136,34 +206,14 @@ move it to trash."
 [2]. Delete .md file;
 [3]. Any other key to ignore temporally: \n")))
             (when (equal user-choise 49)
-              (ArchCST-o2h/append-to-ignore-file element))
+              (o2h/append-to-ignore-file element))
             (when (equal user-choise 50)
               (delete-file element t))))))
   (recentf-cleanup)
   (message "Org to Hexo: clean none exists DONE!"))
 
-(defun ArchCST-o2h/export-all-files ()
-  "This function will use ox-gfm.el to export all .org fills in `hexo-raw-dir'
-into your `hexo-source-dir', will automatically find the same directories name
-and export to it.
-Will only export when files in `hexo-raw-dir' is newer than in `hexo-source-dir'
-to make this function acts more faster.
-Recommendation: only use _posts and _drafts directories in your RAW directory
-to store your .org files, to prevent more unexpected behaviors for now.
-I'll update this function when it became a emacs package.
-Key binding: SPC d h E , can be modified in keybindings.el"
-  ;; TODO check ignore, if exists prompt warning.
-  (interactive)
-  (ArchCST-o2h/get-org-files-paths)
-  (dolist (i hexo-org-files-path)
-    (let* ((o (ArchCST-o2h/get-corresponding-path i)))
-      (if (file-newer-than-file-p i o)
-          (ArchCST-o2h/hexo-org-to-md i o))
-      ))
-  (message "Org to Hexo: export all files DONE!")
-  )
 
-(defun ArchCST-o2h/export-to-file ()
+(defun o2h/export-to-file ()
   "This function wiil export current buffer to a directory from your choice. Notice
 that if you use `ArchCST-org/clean-none-exists' after this you might lose this file's
 exported if this one is not in your RAW-DIR. Make sure this file is in the RAW-DIR to
@@ -180,16 +230,16 @@ Binding key: SPC d h e , can be modified in keybindings.el"
     (org-export-to-file 'gfm outfile))
   (message "Org to Hexo: export this file DONE!"))
 
-(defun ArchCST-o2h/hyper ()
-  "This function will call `ArchCST-o2h/export-all-files' and `ArchCST-o2h/clean-none-exists'
+(defun o2h/hyper ()
+  "This function will call `o2h/export-all-files' and `o2h/clean-none-exists'
 together."
   (interactive)
-  (ArchCST-o2h/export-all-files)
-  (ArchCST-o2h/clean-none-exists)
+  (o2h/export-all-files)
+  (o2h/clean-none-exists)
   (message "Org to Hexo: exported and cleaned, good to go!")
   )
 
-(defun ArchCST-o2h/new-draft ()
+(defun o2h/new-draft ()
   "This function will create a new .org file in your `hexo-raw-dir' directory and
 automatically insert front-matter for it.
 If the file already exited, will switch to it."
@@ -199,14 +249,14 @@ If the file already exited, will switch to it."
         (progn (find-file new-draft-file)
                (message "Draft [ %s ] exists, switched to it!" buffer-file-truename))
       (progn (find-file new-draft-file)
-             (ArchCST-o2h/insert-front-matter)
+             (o2h/insert-front-matter)
              (save-buffer)
              (message "New draft [ %s ] created and saved!" buffer-file-truename)
              ))))
 
  ;; insert
 
-(defun ArchCST-o2h/insert-front-matter ()
+(defun o2h/insert-front-matter ()
   "This function will insert front-mater at the beginning of current buffer, after
 inserted, your cursor will be located at TITLE so you could white your title immediately
 by C W (vim keybindings).
@@ -235,14 +285,14 @@ layout: post
   (scroll-up 0)
   )
 
-(defun ArchCST-o2h/insert-more ()
+(defun o2h/insert-more ()
   "Insert html lable: more"
   (interactive)
   (evil-insert-newline-below)
   (insert-before-markers "#+HTML: <!-- more -->")
   )
 
-(defun ArchCST-o2h/insert-quote ()
+(defun o2h/insert-quote ()
   "Insert lable: quote"
   (interactive)
   (evil-insert-newline-below)
@@ -250,7 +300,7 @@ layout: post
   (evil-previous-line)
   )
 
-(defun ArchCST-o2h/insert-blockquote ()
+(defun o2h/insert-blockquote ()
   "Insert lable: blockquote"
   (interactive)
   (evil-insert-newline-below)
@@ -259,7 +309,7 @@ layout: post
   )
 
 ;; bootstrap callout
-(defun ArchCST-o2h/insert-bc-default ()
+(defun o2h/insert-bc-default ()
   "Insert lable: bootstrap-callout default"
   (interactive)
   (evil-insert-newline-below)
@@ -267,7 +317,7 @@ layout: post
   (evil-previous-line)
   )
 
-(defun ArchCST-o2h/insert-bc-primary ()
+(defun o2h/insert-bc-primary ()
   "Insert lable: bootstrap-callout primary"
   (interactive)
   (evil-insert-newline-below)
@@ -275,7 +325,7 @@ layout: post
   (evil-previous-line)
   )
 
-(defun ArchCST-o2h/insert-bc-success ()
+(defun o2h/insert-bc-success ()
   "Insert lable: bootstrap-callout success"
   (interactive)
   (evil-insert-newline-below)
@@ -283,7 +333,7 @@ layout: post
   (evil-previous-line)
   )
 
-(defun ArchCST-o2h/insert-bc-info ()
+(defun o2h/insert-bc-info ()
   "Insert lable: bootstrap-callout info"
   (interactive)
   (evil-insert-newline-below)
@@ -291,7 +341,7 @@ layout: post
   (evil-previous-line)
   )
 
-(defun ArchCST-o2h/insert-bc-warning ()
+(defun o2h/insert-bc-warning ()
   "Insert lable: bootstrap-callout warning"
   (interactive)
   (evil-insert-newline-below)
@@ -299,7 +349,7 @@ layout: post
   (evil-previous-line)
   )
 
-(defun ArchCST-o2h/insert-bc-danger ()
+(defun o2h/insert-bc-danger ()
   "Insert lable: bootstrap-callout danger"
   (interactive)
   (evil-insert-newline-below)
@@ -307,7 +357,7 @@ layout: post
   (evil-previous-line)
   )
 
-(defun ArchCST-o2h/insert-img-url ()
+(defun o2h/insert-img-url ()
   "Insert url of an image form the kill-ring, if it's not a picture, you
 might need to input it manually"
   (interactive)
