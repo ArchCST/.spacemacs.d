@@ -2,8 +2,9 @@
   '(
     ;;    youdao-dictionary
     company
-    spaceline
+    ;; spaceline
     fcitx
+    ;; (lpy :location (recipe :fetcher github :repo "abo-abo/lpy"))
     ))
 
 ;; (defun ArchCST/init-youdao-dictionary()
@@ -21,11 +22,12 @@
 
 (defun ArchCST/post-init-spaceline()
   :init
-  (setq powerline-default-separator 'brace)
   (display-time-mode)
-  (fancy-battery-mode)
-  )
+  (fancy-battery-mode))
 
 (defun ArchCST/post-init-fcitx()
   :init
   (fcitx-aggressive-setup))
+
+;; (defun ArchCST/init-lpy()
+;;   (use-package lpy))

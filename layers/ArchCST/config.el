@@ -28,3 +28,7 @@
 (setq backup-by-copying t
       make-backup-files nil
       create-lockfiles nil)
+
+;; python
+;; (add-hook 'python-mode-hook #'lpy-mode)
+(setq org-babel-python-command "/Users/cst/.pyenv/versions/py3-daily/bin/python3")

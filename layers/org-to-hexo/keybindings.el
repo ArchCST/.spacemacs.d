@@ -11,7 +11,10 @@
 
 
 (spacemacs/set-leader-keys "dhe" 'o2h/export-raw-to-source)
-(spacemacs/set-leader-keys "dhE" 'o2h/export-to-file)
+(spacemacs/set-leader-keys "dhc" 'o2h/clean-source-dir)
+(spacemacs/set-leader-keys "dhh" 'o2h/hyper)
+(spacemacs/set-leader-keys "dhn" 'o2h/new-draft)
+(spacemacs/set-leader-keys "dhp" 'o2h/publish-draft)
 
  ;; insert
 

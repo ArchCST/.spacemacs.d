@@ -22,3 +22,9 @@
 
 ;; 自动更正错误词
 (spacemacs/set-leader-keys "dc" 'flyspell-correct-at-point)
+
+;; 修正 better-defaults layer C-a C-e 表现不正确的问题
+(define-key evil-insert-state-map (kbd "C-a") 'mwim-beginning-of-code-or-line)
+(define-key evil-motion-state-map (kbd "C-a") 'mwim-beginning-of-code-or-line)
+(define-key evil-insert-state-map (kbd "C-e") 'mwim-end-of-code-or-line)
+(define-key evil-motion-state-map (kbd "C-e") 'mwim-end-of-code-or-line)
