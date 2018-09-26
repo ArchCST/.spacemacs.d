@@ -41,17 +41,16 @@ values."
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     ivy
      helm
-     auto-completion
-     ;; (auto-completion :variables :disabled-for org markdown)
+     (auto-completion :variables :disabled-for org markdown)
      (better-defaults :variables better-defaults-move-to-end-of-code-first t)
      emacs-lisp
      git
      markdown
      (org :variables
           org-want-todo-bindings t
-          org-enable-github-support t)
+          org-enable-github-support t
+          org-src-preserve-indentation t)
      ranger
      (shell :variables
             shell-default-height 30
@@ -80,7 +79,8 @@ values."
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '(vi-tilde-fringe)
+   dotspacemacs-excluded-packages '(vi-tilde-fringe
+                                    auto-complete)
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
    ;; `used-only' installs only explicitly used packages and uninstall any
@@ -354,8 +354,17 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+  (global-company-mode)
   (require 'helm)
   (setq spaceline-org-clock-p t)
+  ;; python configurations:
+  (add-to-list 'company-backends 'company-anaconda)
+  (require 'pyvenv)
+  (pyvenv-activate "~/.pyenv/versions/py3-daily")
+  (setq tab-width 4)
+  (setq py-indent-offset 4)
+  (setq python-spacemacs-indent-guess nil)
+  (setq python-indent-guess-indent-offset nil)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will

@@ -1,9 +1,10 @@
 (defconst ArchCST-packages
   '(
-    ;;    youdao-dictionary
     company
-    ;; spaceline
+;;    (company-anaconda :toggle (configuration-layer/package-usedp 'company))
     fcitx
+    ;;    youdao-dictionary
+    ;; spaceline
     ;; (lpy :location (recipe :fetcher github :repo "abo-abo/lpy"))
     ))
 
@@ -28,6 +29,3 @@
 (defun ArchCST/post-init-fcitx()
   :init
   (fcitx-aggressive-setup))
-
-;; (defun ArchCST/init-lpy()
-;;   (use-package lpy))

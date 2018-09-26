@@ -39,9 +39,6 @@
 ;;                   "return links as string"))))
 ;;     (format "%s" (s-chop-suffix "\"" (s-chop-prefix "\"" result)))))
 
-;; 解决远程服务器响应缓慢
-(setq projectile-mode-line "Projectile")
-
 ;; org-mode company
 (defun my-org-mode-hook ()
   (add-hook 'completion-at-point-functions 'pcomplete-completions-at-point nil t))

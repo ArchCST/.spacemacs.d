@@ -1,18 +1,8 @@
 ;; agenda-files 文件位置
-(setq org-agenda-files '("~/Dropbox/OrgCST"))
-;; 设置org-agenda-files的目录
-(setq ArchCST/org-files "~/Dropbox/OrgCST/")
-(setq ArchCST/org-inbox (concat ArchCST/org-files "inbox" ".org"))
-(setq ArchCST/org-archive (concat ArchCST/org-files "archive" ".org"))
-(setq ArchCST/org-fulfillment (concat ArchCST/org-files "fulfilment" ".org"))
-(setq ArchCST/org-journal (concat ArchCST/org-files "journal" ".org"))
-(setq ArchCST/org-personal (concat ArchCST/org-files "personal" ".org"))
-(setq ArchCST/org-someday (concat ArchCST/org-files "someday" ".org"))
-(setq ArchCST/org-work (concat ArchCST/org-files "work" ".org"))
+(setq org-agenda-files '("~/OrgCST"))
+
 ;; org-capture 文件位置
-(setq org-default-notes-file ArchCST/org-inbox)
-;; Archive 文件位置，和 headline 的命名（使用 datetree） 
-(setq org-archive-location (concat ArchCST/org-archive "::datetree/* From %s"))
+(setq org-default-notes-file "~/OrgCST/inbox.org")
 
 ;; 设置 orgmode 的 TODO 状态
 (setq org-todo-keywords
@@ -32,14 +22,15 @@
 
 ;; org-capture 模板
 (setq org-capture-templates
-      '(("i" "inbox" entry (file+headline ArchCST/org-inbox "Org-Capture")
+      '(("i" "inbox" entry (file+headline "~/OrgCST/inbox.org" "Org-Capture")
          "* TODO %?\n%U")
         ("u" "url" entry (file+headline ArchCST/org-inbox "Org-Capture")
          "* TODO [#C] %?\n%U\n%(ArchCST/retrieve-safari-current-tab-url)")
         ("j" "journal" entry (file+datetree ArchCST/org-journal)
          "* %?\nDATE: %U\n%a")
         ))
-;; --------------------------------------------------------------------------
+
+
 
 ;; 设置默认 clocktable 产生的方法
 (setq org-clock-clocktable-default-properties '(:maxlevel 3 :scope file))
@@ -48,7 +39,6 @@
 (setq org-duration-format 'h:mm)
 
 ;; 在 orgmode 中实现编程语言语法高亮
-(require 'org)
 (setq org-src-fontify-natively t)
 
 ;; 改变各级标题大小
@@ -109,21 +99,9 @@
 (spacemacs/set-leader-keys "ol" 'org-clock-in-last)
 (spacemacs/set-leader-keys "op" 'org-priority)
 
-;; SPC o + 首字母打开 org-files
-(defun ArchCST/org-open-file (filename)
-  (interactive)
-  (find-file (concat ArchCST/org-files filename ".org")))
-(spacemacs/set-leader-keys "ofi" '(lambda() (interactive) (ArchCST/org-open-file "inbox")))
-(spacemacs/set-leader-keys "ofa" '(lambda() (interactive) (ArchCST/org-open-file "archive")))
-(spacemacs/set-leader-keys "off" '(lambda() (interactive) (ArchCST/org-open-file "fulfilment")))
-(spacemacs/set-leader-keys "ofj" '(lambda() (interactive) (ArchCST/org-open-file "journal")))
-(spacemacs/set-leader-keys "ofp" '(lambda() (interactive) (ArchCST/org-open-file "personal")))
-(spacemacs/set-leader-keys "ofs" '(lambda() (interactive) (ArchCST/org-open-file "someday")))
-(spacemacs/set-leader-keys "ofw" '(lambda() (interactive) (ArchCST/org-open-file "work")))
-
 ;; 添加 orgmode 常用快捷键
 (global-set-key (kbd "C-c w") 'org-refile)
-(global-set-key (kbd "C-c a") 'org-agenda)
+;; (global-set-key (kbd "C-c a") 'org-agenda)
 
 ;; ;; 以 datetree 方式 archive 文件
 ;; (defun ArchCST/org-read-datetree-date (d)

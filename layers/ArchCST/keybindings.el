@@ -14,7 +14,7 @@
 (global-set-key (kbd "C-h C-k") 'find-function-on-key)
 
 ;; 获取当前 URL
-(spacemacs/set-leader-keys "dl" 'ArchCST/insert-safari-current-tab-url)
+(spacemacs/set-leader-keys "d;" 'ArchCST/insert-safari-current-tab-url)
 (global-set-key (kbd "C-c C-;") 'ArchCST/insert-safari-current-tab-url)
 
 ;; 绑定有道快捷键

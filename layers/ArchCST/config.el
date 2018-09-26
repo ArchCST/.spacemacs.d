@@ -1,6 +1,3 @@
-;; 全局开启行号
-;; (line-number-mode t)
-
 ;; 自动加载外部更改的文件
 (global-auto-revert-mode t)
 
@@ -29,6 +26,5 @@
       make-backup-files nil
       create-lockfiles nil)
 
-;; python
-;; (add-hook 'python-mode-hook #'lpy-mode)
-(setq org-babel-python-command "/Users/cst/.pyenv/versions/py3-daily/bin/python3")
+;; 解决远程服务器响应缓慢
+(setq projectile-mode-line "Projectile")
