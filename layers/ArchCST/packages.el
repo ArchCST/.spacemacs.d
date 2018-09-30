@@ -1,25 +1,15 @@
 (defconst ArchCST-packages
   '(
     company
-;;    (company-anaconda :toggle (configuration-layer/package-usedp 'company))
     fcitx
-    ;;    youdao-dictionary
-    ;; spaceline
     ;; (lpy :location (recipe :fetcher github :repo "abo-abo/lpy"))
     ))
 
-;; (defun ArchCST/init-youdao-dictionary()
-;;   (use-package youdao-dictionary
-;;     :defer t
-;;     :init
-;;     (spacemacs/set-leader-keys "oy" 'youdao-dictionary-search-at-point+)
-;;     )
-;;   )
 
 (defun ArchCST/post-init-company()
   (setq company-minimum-prefix-length 2)
   (setq company-idle-delay 0.01)
-  )
+  (setq company-dabbrev-char-regexp "[\\.0-9a-z-_'/]"))
 
 (defun ArchCST/post-init-spaceline()
   :init
@@ -28,4 +18,7 @@
 
 (defun ArchCST/post-init-fcitx()
   :init
-  (fcitx-aggressive-setup))
+  (setq fcitx-active-evil-states '(insert emacs hybrid))
+  (fcitx-aggressive-setup)
+  (fcitx-prefix-keys-add "M-m")
+  (fcitx-prefix-keys-add "SPC"))

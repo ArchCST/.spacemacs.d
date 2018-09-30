@@ -11,12 +11,6 @@
 (when (and (spacemacs/system-is-linux) window-system)
   (setq browse-url-browser-function 'browse-url-chromium))
 
-;; Mac下用 command 作为 meta key
-;; (when (and (spacemacs/system-is-mac) window-system)
-;;   (setq mac-option-modifier 'super)
-;;   (setq mac-command-modifier 'meta)
-;;   )
-
 ;; flycheck
 (add-hook 'prog-mode-hook 'spaceline-toggle-flycheck-info-on)
 (add-hook 'prog-mode-hook 'flycheck-mode)

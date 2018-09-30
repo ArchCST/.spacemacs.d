@@ -120,3 +120,17 @@
 ;;                                   (org-datetree-find-date-create datetree-date)
 ;;                                   (point)))))))
 ;; (spacemacs/set-leader-keys "oa" 'ArchCST/org-refile-to-archive-datetree)
+
+;; open org-agenda-files
+
+;; SPC o + 首字母打开 org-files
+(defun ArchCST/org-open-file (file)
+  (interactive)
+  (find-file (concat "~/OrgCST/" file ".org")))
+(spacemacs/set-leader-keys "ofi" '(lambda() (interactive) (ArchCST/org-open-file "inbox")))
+(spacemacs/set-leader-keys "ofa" '(lambda() (interactive) (ArchCST/org-open-file "archive")))
+(spacemacs/set-leader-keys "off" '(lambda() (interactive) (ArchCST/org-open-file "fulfilment")))
+(spacemacs/set-leader-keys "ofj" '(lambda() (interactive) (ArchCST/org-open-file "journal")))
+(spacemacs/set-leader-keys "ofp" '(lambda() (interactive) (ArchCST/org-open-file "personal")))
+(spacemacs/set-leader-keys "ofs" '(lambda() (interactive) (ArchCST/org-open-file "someday")))
+(spacemacs/set-leader-keys "ofw" '(lambda() (interactive) (ArchCST/org-open-file "work")))

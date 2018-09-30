@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : py-results-output
+#key : pyo
+#contributor : ArchCST
+# --
+#+BEGIN_SRC python :results output :exports both
+$0
+#+END_SRC
