@@ -3,4 +3,5 @@
                                       ArchCST-orgpage
                                       ;; ArchCST-o2h
                                       org-to-hexo
+                                      ;; ArchCST-spaceline
                                       ))

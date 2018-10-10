@@ -11,9 +11,9 @@
 (when (and (spacemacs/system-is-linux) window-system)
   (setq browse-url-browser-function 'browse-url-chromium))
 
-;; flycheck
-(add-hook 'prog-mode-hook 'spaceline-toggle-flycheck-info-on)
-(add-hook 'prog-mode-hook 'flycheck-mode)
+;; ;; flycheck
+;; (add-hook 'prog-mode-hook 'spaceline-toggle-flycheck-info-on)
+;; (add-hook 'prog-mode-hook 'flycheck-mode)
 
 ;; 关闭自动备份
 (setq backup-by-copying t

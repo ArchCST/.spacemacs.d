@@ -157,6 +157,7 @@ use org-to-hexo.el"
 This is the main function of org-to-hexo, you can always use this to
 prevent unwanted behaviors.
 When first use, it might take some time to create raw directory."
+  (interactive)
   (o2h/clean-source-dir)
   (o2h/export-raw-to-source))
 
