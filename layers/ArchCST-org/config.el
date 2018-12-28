@@ -1,47 +1,102 @@
-;; agenda-files 文件位置
-(setq org-agenda-files '("~/OrgCST"))
+;; AGENDA FILES
+;; Files location
+;; Both ~/OrgCST and ~/Dropbox/OrgCST are simlink to ~/Documents/OrgCST
+(setq org-agenda-files '("~/Documents/OrgCST"))
+(setq org-directory "~/Documents/OrgCST")
 
-;; org-capture 文件位置
-(setq org-default-notes-file "~/OrgCST/inbox.org")
+;; Capture
+;; Org capture files location
+(setq org-default-notes-file (concat org-directory "/inbox.org"))
 
-;; 设置 orgmode 的 TODO 状态
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "WIP(w!)" "|" "DONE(d!)" "ABORT(a@/!)")))
-
-;; 预设 tags
-(setq org-tag-alist '(
-                      (:newline . nil)
-                      ("Anywhere" . ?A) ("Home" . ?H) ("Office" . ?O) ("Shiren" . ?S)
-                      (:newline . nil)
-                      (:newline . nil)
-                      ("Mac" . ?m) ("Cellhone" . ?c) ("Win" . ?w) ("Linux" . ?l) ("LinodeServer" . ?L)
-                      (:newline . nil)
-                      (:newline . nil)
-                      ("idea" . ?i) ("someday" . ?s) ("notes" . ?n)
-                      ))
-
-;; org-capture 模板
+;; org-capture templates
 (setq org-capture-templates
-      '(("i" "inbox" entry (file+headline "~/OrgCST/inbox.org" "Org-Capture")
-         "* TODO %?\n%U")
-        ("u" "url" entry (file+headline ArchCST/org-inbox "Org-Capture")
-         "* TODO [#C] %?\n%U\n%(ArchCST/retrieve-safari-current-tab-url)")
-        ("j" "journal" entry (file+datetree ArchCST/org-journal)
+      '(("i" "inbox" entry (file+headline "inbox.org" "Org-Capture")
+         "* TODO %? :RAW:\n%U" :unnarrowed t)
+        ("u" "url" entry (file+headline  "inbox.org" "Org-Capture")
+         "* TODO %? :RAW:\n%U\n%(ArchCST/retrieve-safari-current-tab-url)")
+        ("j" "journal" entry (file+datetree "Datetree.org")
          "* %?\nDATE: %U\n%a")
         ))
 
-
 
-;; 设置默认 clocktable 产生的方法
-(setq org-clock-clocktable-default-properties '(:maxlevel 3 :scope file))
+
+;; TAGS & PROPERTIES & TODOs & PRIORITIES
+
+;; (setq org-tag-alist '())
+
+;; Global persistent tags
+(setq org-tag-persistent-alist '(("FLAGGED" . ?1) ("RAW" . ?0) ("ROUTINE" . ?8) ("REVIEW" . ?9)
+                                 (:newline)
+                                 ("FULFILMENT" . ?f) ("JOB" .?j) ("EARNED" . ?e) ("WASTED" . ?w)
+                                 (:newline)
+                                 ("IMPORTANT" . ?i) ("URGENT" . ?u) ("REFERENCE" . ?r)
+                                 (:newline)
+                                 (:newline)))
+
+;; Set inheritance tags
+;; (setq org-tags-exclude-from-inheritance '("EARNED"))
+
+;; preset properties
+(setq org-global-properties '(("VALUE_ALL" . "0 1 2 3 4 5")))
+
+;; TODOs
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "NEXT(n)" "PNDG(p!)" "WATG(w@/!)" "SMDY(s)" "HOLD(h)" "|" "DONE(d!)" "ABRT(a@/!)" "FAIL(f@/!)")))
+
+;; Set default priorities 'Z'
+(setq org-default-priority 90)
+
+
+;; ARCHIVE & CLOCKS
+;; Default way of generate clocktable
+(setq org-clock-clocktable-default-properties '(:scope subtree))
 
 ;; 持续时间的显示格式改为小时分钟（默认是天小时分钟）
 (setq org-duration-format 'h:mm)
 
-;; 在 orgmode 中实现编程语言语法高亮
-(setq org-src-fontify-natively t)
+;; Save the running clock and all clock history when exiting Emacs, load it on startup
+(setq org-clock-persist t)
 
-;; 改变各级标题大小
+;; Resume clocking task on clock-in if the clock is open
+(setq org-clock-in-resume t)
+
+;; Do not prompt to resume an active clock, just resume it
+(setq org-clock-persist-query-resume nil)
+
+;; Archive to Datetree.org with datetree
+(setq org-archive-location "Datetree.org::datetree/")
+
+;; Archive all done tasks in current buffer
+(defun ArchCST/archive-done-tasks ()
+  (interactive)
+  (org-map-entries 'org-archive-subtree "/DONE"))
+
+;; AGENDA VIEW
+
+;; Deadline warning n days before
+;; If want to show before n days in a single entry, use timestamp like
+;; DEADLINE: <2004-02-29 Sun -5d>
+;; this will show in 5 days before deadline in agenda view
+(setq org-deadline-warning-days 3)
+
+;; Don't show future scheduled entries
+(setq org-agenda-todo-ignore-scheduled 'future)
+
+;; Don't show scheduled when deadline is shown except shceduled today
+(setq org-agenda-skip-scheduled-if-deadline-is-shown 'not-today)
+
+;; Cleanup search temp
+(defun ArchCST/cleanup-org-tags-history()
+  "This function will reset `org-tags-history' value to nil."
+  (interactive)
+  (setq org-tags-history nil))
+
+
+;; APPEARANCE
+;; Log into drawers
+(setq org-log-into-drawer t)
+
+;; Change font-size for headings
 (defun ArchCST/org-heading-font ()
   "Stop the org-level headers from increasing in height relative to the other text."
   (dolist (face '(org-level-1
@@ -55,23 +110,43 @@
     (set-face-attribute face nil :weight 'semi-bold :height 1.0)))
 (add-hook 'org-mode-hook 'ArchCST/org-heading-font)
 
-;; 标签对齐
-(setq org-tags-column -70)
+;; set todo keyword color
+(setf org-todo-keyword-faces '(("TODO" . (:foreground "#247ba0" :weight bold))
+                               ("NEXT" . (:foreground "#ff3864" :weight bold))
+                               ("PNDG" . (:foreground "#bebbbb" :weight bold))
+                               ("WATG" . (:foreground "#ffe066" :weight bold))
+                               ("SMDY" . (:foreground "#9593d9" :weight bold))
+                               ("HOLD" . (:foreground "#f25c54" :weight bold))
+                               ("DONE" . (:foreground "#70c1b3" :weight bold))
+                               ("ABRT" . (:foreground "#afd8af" :weight bold))
+                               ("FAIL" . (:foreground "#ff9b71" :weight bold))
+                               ))
 
-;; 开启indent-mode
+;; FXME tag keyword color
+;; (setq org-tag-faces '(())
+
+
+;; Highlight syntax in orgmode
+(setq org-src-fontify-natively t)
+
+;; Indent tags
+;; (setq org-tags-column -70)
+
+;; Indent headings
 (setq org-startup-indented t)
 
-;; org 文件自动换行
+;; Set org-bullet
+(setq org-bullets-bullet-list '("▶" "♬" "♫" "♪" "♩"))
+
+;; Auto wrap long lines
 (add-hook 'org-mode-hook 'spacemacs/toggle-visual-line-navigation-on)
 
-;; org 回车打开链接
-(setq org-return-follows-link t)
+;; Let org transcode markups in current buffer
+;; (setq org-pretty-entities nil)
 
-;; 自动完成父级任务
-(defun org-summary-todo (n-done n-not-done)
-  (let (org-log-done org-log-states)
-    (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
-(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+;; SETTINGS & CONFIGS
+;; Return to open links
+(setq org-return-follows-link t)
 
 ;; 设置refile target
 (setq org-refile-targets '((nil :maxlevel . 3)
@@ -88,9 +163,29 @@
 ;; 在当前buffer打开 indirect buffer
 ;; (setq org-indirect-buffer-display 'current-buffer)
 
-;; ------------------------------ keybindings ------------------------------ 
+;; ;; auto done father level
+;; (defun org-summary-todo (n-done n-not-done)
+;;   (let (org-log-done org-log-states)
+;;     (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+;; (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+;; KEYBINDINGS
+;; Refile
+(global-set-key (kbd "C-c w") 'org-refile)
+;; (global-set-key (kbd "C-c a") 'org-agenda)
 
-;; 设置 org-clock 快捷键
+;; Open files
+(spacemacs/set-leader-keys "ofi" '(lambda() (interactive) (find-file (concat org-directory "/inbox.org"))))
+(spacemacs/set-leader-keys "ofa" '(lambda() (interactive) (find-file (concat org-directory "/archive.org"))))
+(spacemacs/set-leader-keys "off" '(lambda() (interactive) (find-file (concat org-directory "/fulfilment.org"))))
+(spacemacs/set-leader-keys "ofj" '(lambda() (interactive) (find-file (concat org-directory "/journal.org"))))
+(spacemacs/set-leader-keys "ofp" '(lambda() (interactive) (find-file (concat org-directory "/personal.org"))))
+(spacemacs/set-leader-keys "ofc" '(lambda() (interactive) (find-file (concat org-directory "/collections.org"))))
+(spacemacs/set-leader-keys "ofw" '(lambda() (interactive) (find-file (concat org-directory "/work.org"))))
+
+;; NEXT quickly open org files function
+;; (spacemacs/declare-prefix "of" "open-org-files")
+
+;; Clock keybindings
 (spacemacs/set-leader-keys "oi" 'org-clock-in)
 (spacemacs/set-leader-keys "oo" 'org-clock-out)
 (spacemacs/set-leader-keys "oc" 'org-clock-cancel)
@@ -99,38 +194,6 @@
 (spacemacs/set-leader-keys "ol" 'org-clock-in-last)
 (spacemacs/set-leader-keys "op" 'org-priority)
 
-;; 添加 orgmode 常用快捷键
-(global-set-key (kbd "C-c w") 'org-refile)
-;; (global-set-key (kbd "C-c a") 'org-agenda)
-
-;; ;; 以 datetree 方式 archive 文件
-;; (defun ArchCST/org-read-datetree-date (d)
-;;   ;; "Parse a time string D and return a date to pass to the datetree functions."
-;;   (let ((dtmp (nthcdr 3 (parse-time-string d))))
-;;     (list (cadr dtmp) (car dtmp) (caddr dtmp))))
-;; (defun ArchCST/org-refile-to-archive-datetree (&optional bfn)
-;;   ;; "Refile an entry to a datetree under an archive."
-;;   (interactive)
-;;   (require 'org-datetree)
-;;   (let* ((bfn (or bfn (find-file-noselect (expand-file-name ArchCST/org-archive))))
-;;          (datetree-date (ArchCST/org-read-datetree-date (org-read-date t nil))))
-;;     (org-refile nil nil (list nil (buffer-file-name bfn) nil
-;;                               (with-current-buffer bfn
-;;                                 (save-excursion
-;;                                   (org-datetree-find-date-create datetree-date)
-;;                                   (point)))))))
-;; (spacemacs/set-leader-keys "oa" 'ArchCST/org-refile-to-archive-datetree)
-
-;; open org-agenda-files
-
-;; SPC o + 首字母打开 org-files
-(defun ArchCST/org-open-file (file)
-  (interactive)
-  (find-file (concat "~/OrgCST/" file ".org")))
-(spacemacs/set-leader-keys "ofi" '(lambda() (interactive) (ArchCST/org-open-file "inbox")))
-(spacemacs/set-leader-keys "ofa" '(lambda() (interactive) (ArchCST/org-open-file "archive")))
-(spacemacs/set-leader-keys "off" '(lambda() (interactive) (ArchCST/org-open-file "fulfilment")))
-(spacemacs/set-leader-keys "ofj" '(lambda() (interactive) (ArchCST/org-open-file "journal")))
-(spacemacs/set-leader-keys "ofp" '(lambda() (interactive) (ArchCST/org-open-file "personal")))
-(spacemacs/set-leader-keys "ofs" '(lambda() (interactive) (ArchCST/org-open-file "someday")))
-(spacemacs/set-leader-keys "ofw" '(lambda() (interactive) (ArchCST/org-open-file "work")))
+;; Archive
+(spacemacs/set-leader-keys "oa" 'org-archive-subtree)
+(spacemacs/set-leader-keys "oA" 'ArchCST/archive-done-tasks)
