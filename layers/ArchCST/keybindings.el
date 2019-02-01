@@ -30,5 +30,6 @@
 (define-key evil-motion-state-map (kbd "C-e") 'mwim-end-of-code-or-line)
 
 ;; snippet
-(spacemacs/set-leader-keys "de" 'hippie-expand)
+;; (spacemacs/set-leader-keys "de" 'hippie-expand)
 (spacemacs/set-leader-keys "dr" 'helm-yas-create-snippet-on-region)
+;; (global-set-key (kbd "<tab>") 'yas-expand)

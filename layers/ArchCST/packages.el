@@ -2,7 +2,6 @@
   '(
     company
     fcitx
-    ;; (lpy :location (recipe :fetcher github :repo "abo-abo/lpy"))
     ))
 
 (defun ArchCST/post-init-company()
@@ -17,5 +16,5 @@
   (fcitx-prefix-keys-add "M-m")
   (fcitx-prefix-keys-add "SPC"))
 
-(defun ArchCST/init-all-the-icons()
-  (use-package all-the-icons))
+;; (defun ArchCST/init-all-the-icons()
+;;   (use-package all-the-icons))
