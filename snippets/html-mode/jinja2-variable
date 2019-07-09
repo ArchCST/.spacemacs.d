@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : jinj2-variable
+#key : jj
+#contributor : ArchCST
+# --
+{{ $0 }}

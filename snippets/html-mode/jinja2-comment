@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : jinj2-comment
+#key : jc
+#contributor : ArchCST
+# --
+{# $0 #}

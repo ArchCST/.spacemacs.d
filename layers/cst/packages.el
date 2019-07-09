@@ -2,8 +2,8 @@
 ;;
 ;; Copyright (c) 2012-2018 Sylvain Benner & Contributors
 ;;
-;; Author: 陈诗桐 <cst@chenshiongdeMBP.lan>
-;; URL: https://github.com/syl20bnr/spacemacs
+;; Author: ArchCST <cst@crystl.cc>
+;; URL: https://github.com/ArchCST
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
@@ -30,7 +30,7 @@
 ;;; Code:
 
 (defconst cst-packages
-  '()
+  '(cst-org)
   "The list of Lisp packages required by the cst layer.
 
 Each entry is either:
@@ -57,6 +57,5 @@ Each entry is either:
 
       - A list beginning with the symbol `recipe' is a melpa
         recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
-
 
 ;;; packages.el ends here

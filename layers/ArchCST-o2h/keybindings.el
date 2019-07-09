@@ -36,3 +36,5 @@
 
 (spacemacs/declare-prefix "dh" "org to hexo")
 (spacemacs/declare-prefix "dhi" "insert labels")
+
+(global-set-key (kbd "M-/") 'yas-expand)

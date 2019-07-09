@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : jinja2-block
+#key : j5
+#contributor : ArchCST
+# --
+{% $0 %}

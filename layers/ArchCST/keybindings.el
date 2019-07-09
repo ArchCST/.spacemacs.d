@@ -28,8 +28,16 @@
 (define-key evil-motion-state-map (kbd "C-a") 'mwim-beginning-of-code-or-line)
 (define-key evil-insert-state-map (kbd "C-e") 'mwim-end-of-code-or-line)
 (define-key evil-motion-state-map (kbd "C-e") 'mwim-end-of-code-or-line)
+(define-key evil-insert-state-map (kbd "C-n") 'evil-next-line)
+(define-key evil-insert-state-map (kbd "C-p") 'evil-previous-line)
 
 ;; snippet
 ;; (spacemacs/set-leader-keys "de" 'hippie-expand)
 (spacemacs/set-leader-keys "dr" 'helm-yas-create-snippet-on-region)
 ;; (global-set-key (kbd "<tab>") 'yas-expand)
+(define-key evil-insert-state-map (kbd "M-0") 'yas-expand-from-trigger-key)
+(define-key evil-motion-state-map (kbd "M-0") 'yas-expand-from-trigger-key)
+(define-key evil-insert-state-map (kbd "C-o") 'treemacs-select-window)
+(define-key evil-motion-state-map (kbd "C-o") 'treemacs-select-window)
+;; edit org-babel
+(spacemacs/set-leader-keys "de" 'org-edit-src-code)
